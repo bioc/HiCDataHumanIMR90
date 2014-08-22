@@ -1,0 +1,137 @@
+%\VignetteIndexEntry{HiC Data Human Fibroblast Dixon et al. 2012}
+%\VignetteDepends{}
+%\VignetteKeywords{next-generation sequencing}
+%\VignettePackage{HiCDataHumanIMR90} % name of package
+
+%%%% HEAD SECTION: START EDITING BELOW %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[11pt, a4paper, fleqn]{article}
+
+<<style, eval=TRUE, echo=FALSE, results=tex>>=
+BiocStyle::latex(use.unsrturl=FALSE)
+@ 
+
+\usepackage{geometry}
+%\usepackage{color}
+%\definecolor{darkblue}{rgb}{0.0,0.0,0.75}
+\definecolor{mygray}{gray}{0.90}
+%\usepackage[%
+%baseurl={http://www.bioconductor.org},%
+%pdftitle={HiTC - High Throughput analysis of 'C' experiments},%
+%pdfauthor={Nicolas Servant},%
+%pdfsubject={HiTC Vignette},%
+%pdfkeywords={Bioconductor},%
+%pagebackref,bookmarks,colorlinks,linkcolor=darkblue,citecolor=darkblue,%
+%filecolor=darkblue,urlcolor=darkblue,pagecolor=darkblue,%
+%raiselinks,plainpages,pdftex]{hyperref}
+
+%\usepackage[utf8]{inputenc} 
+%\usepackage{verbatim} % for multi-line comments
+%\usepackage{amsmath,a4,t1enc, graphicx}
+\usepackage{natbib}
+%\bibpunct{(}{)}{;}{a}{,}{,}
+
+%\parindent0mm
+%\parskip2ex plus0.5ex minus0.3ex
+
+%\newcommand{\Robject}[1]{{\texttt{#1}}}
+%\newcommand{\Rfunction}[1]{{\texttt{#1}}}
+%\newcommand{\Rpackage}[1]{{\textit{#1}}}
+%\newcommand{\Rclass}[1]{{\textit{#1}}}
+\newcommand{\Rmethod}[1]{{\texttt{#1}}}
+%\newcommand{\Rfunarg}[1]{{\texttt{#1}}}
+%\newcommand{\phead}[1]{{\flushleft \sf \small \textbf{#1} \quad}}
+% \newcommand{\myincfig}[3]{%
+%   \begin{figure}[h!tb]
+%     \begin{center}
+%       \includegraphics[width=#2]{#1}
+%       \caption{\label{#1}\textit{#3}}
+%     \end{center}
+%   \end{figure}
+% }
+%\addtolength{\textwidth}{2cm}
+%\addtolength{\oddsidemargin}{-1cm}
+%\addtolength{\evensidemargin}{-1cm}
+%\addtolength{\textheight}{2cm}
+%\addtolength{\topmargin}{-1cm}
+%\addtolength{\skip\footins}{1cm}
+
+
+%%%%%%% START EDITING HERE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+
+\SweaveOpts{prefix.string = ./HiTC, eps=false, keep.source=TRUE, eval=TRUE, echo=TRUE} % produce no 'eps' figures
+%\setkeys{Gin}{width=0.5\textwidth}
+
+\title{\textbf{Human Fibroblast IMR90 Hi-C Data (Dixon et al.)}}
+\author{
+\href{mailto:nicolas.servant@curie.fr}{Nicolas Servant}
+}
+\maketitle
+
+%\tableofcontents
+%\newpage
+
+\section{Introduction}
+The Hi-C technic was first introduced by \cite{Lieberman-Aiden2009}. In the continuity with 3C, 4C and 5C technics, the goal of the Hi-C is to simultaneoulsy detect all chromosomal contacts in a single experiment. All this technics aim at measuring the population-averaged frequency at which two genomic loci physically interact in three-dimensional space. In Hi-C, after a first crosslink and digestion, all genomic fragments are labeled with a biotinylated nucleotide before ligation. These junctions can then be purified efficiently by streptavidin-coated magnetic beads, and finaly sequenced using a standard Illumina paired-end protocol.\\
+The data available in this package were published by \cite{Dixon2012} and downloaded from the GEO website (GSE35156, sample GSM862724). This publication is one of the key paper in the field for two main reasons: i) it was the first time than Hi-C data were generated at such resolution (up to 20kb), ii) this resolution highlighted a new short range structure defined as topological domains (TADs), with high frequencies of intra-domain chromatin interactions but infrequent inter-domain chromatin interactions (\cite{Nora2012a}).
+
+If you use \Rpackage{HiCDataHumanIMR90}, please cite:
+\begin{itemize}
+  \item Servant N (2014). HiCDataHumanIMR90: Human Fibroblast IMR90 HiC data from Dixon et al. 2012. R package version 1.1.0. 
+  \item Dixon JR, Selvaraj S, Yue F, Kim A et al. (2012) Topological domains in mammalian genomes identified by analysis of chromatin interactions. Nature 485(7398):376-80. 
+\end{itemize}
+
+\section{Hi-C Data}
+The \Robject{hic\_imr90\_40} object is a \Rclass{HTClist} object (see the \Rpackage{HiTC} package for more information (\cite{Servant2012})). It contains the complete genome-wide HiC data, with all inter and intrachromosomic contact maps at a resolution of 40kb.
+
+<<describe>>=
+require(HiCDataHumanIMR90)
+require(HiTC)
+data(Dixon2012_IMR90)
+## Show data
+show(hic_imr90_40)
+## Is my data complete (i.e. composed of intra + inter chromosomal maps)
+isComplete(hic_imr90_40)
+## Note that a complete object is not necessarily pairwise 
+## (is both chr1-chr2 and chr2-chr1 stored ?)
+isPairwise(hic_imr90_40)
+## Which chromosomes ?
+seqlevels(hic_imr90_40)
+## Details about a given map
+detail(hic_imr90_40$chrXchrX)
+## Descriptive statistics
+head(summary(hic_imr90_40))
+@ 
+
+\section{Topological Domains}
+The \Robject{tads\_imr90} object is a \Rclass{GRanges} object with a all TADs detected from this Hi-C data. 
+<<tads>>=
+show(tads_imr90)
+@ 
+<<tads_plot, fig=TRUE, width=7, heigh=7>>=
+## Extract region
+regx <- extractRegion(hic_imr90_40$chrXchrX, 
+                      chr="chrX", from=95000000, to=105000000)
+## Plot Hi-C data with TADs
+plot(regx, tracks=list(tads_imr90), maxrange=20)
+@ 
+
+
+\small
+\section*{Package versions}
+This vignette was generated using the following package versions:
+<<sessionInfo, echo=FALSE, results=tex>>=
+toLatex(sessionInfo(), locale=FALSE)
+@
+
+\newpage
+\small
+%%% BIBLIOGRAPHY STARTS HERE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\bibliographystyle{abbrvnat}
+\bibliography{HiTC}
+
+%\begin{thebibliography}{}
+%\end{thebibliography}
+
+\end{document}

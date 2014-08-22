@@ -1,0 +1,17 @@
+Package: HiCDataHumanIMR90
+Title: Human IMR90 Fibroblast HiC data from Dixon et al. 2012
+Description: The HiC data from Human Fibroblast IMR90 cell line
+        (HindIII restriction) was retrieved from the GEO website,
+        accession number GSE35156
+        (http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE35156).
+        The raw reads were processed as explained in Dixon et al.
+        (Nature 2012).
+Version: 0.99.0
+Date: 2014-06-30
+Author: Nicolas Servant
+Maintainer: Nicolas Servant <Nicolas.Servant@curie.fr>
+Suggests: HiTC
+biocViews: ExperimentData, HighThroughputSequencingData
+License: GPL-3
+InstallableEverywhere: yes
+Depends: R (>= 2.10)
