@@ -6,7 +6,7 @@ Description: The HiC data from Human Fibroblast IMR90 cell line
         (http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE35156).
         The raw reads were processed as explained in Dixon et al.
         (Nature 2012).
-Version: 0.99.2
+Version: 0.101.0
 Date: 2014-06-30
 Author: Nicolas Servant
 Maintainer: Nicolas Servant <Nicolas.Servant@curie.fr>
